@@ -32,6 +32,17 @@ class SpecialtyController extends Controller
             'data' => $specialty
         ], 201);
     }
+
+    public function destroy($id)
+    {
+        $specialty = Specialty::find($id);
+        Specialty::destroy($id);
+        return response()->json([
+            'success' => true,
+            'message' => 'Specialty deleted successfully',
+            'name' => $specialty->specialty
+        ], 200);
+    }
 }
 
 ?>

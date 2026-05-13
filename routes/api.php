@@ -18,6 +18,8 @@ Route::post('/groups/import', [GroupController::class, 'store']);
 
 Route::delete('/groups/{id}', [GroupController::class, 'destroy']);
 
+Route::post('/groups/addSpecialty', [GroupController::class, 'addSpecialty']);
+
 Route::post('/students/create', [StudentController::class, 'createStudent']);
 
 Route::delete('/students/{id}', [StudentController::class, 'destroyStudent']);
@@ -25,3 +27,5 @@ Route::delete('/students/{id}', [StudentController::class, 'destroyStudent']);
 Route::get('/specialties', [SpecialtyController::class, 'index']);
 
 Route::post('/specialties', [SpecialtyController::class, 'store']);
+
+Route::delete('/specialties/{id}', [SpecialtyController::class, 'destroy']);

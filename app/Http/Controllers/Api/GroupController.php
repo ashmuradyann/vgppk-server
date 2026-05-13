@@ -32,7 +32,8 @@ class GroupController extends Controller
             'name' => $request->name,
             'teacher_name' => $request->teacher_name,
             'academic_year' => $request->academic_year,
-            "specialty" => $request->specialty
+            // "specialty" => $request->specialty,
+            // "practise_type" => $request->practise_type
         ]);
 
         foreach ($request->students as $fullName) {
@@ -52,7 +53,7 @@ class GroupController extends Controller
 
     public function destroy($id)
     {
-        $group = StudentGroup::find($id);
+        $group = StudentGroup::findOrFail($id);
         StudentGroup::destroy($id);
         return response()->json([
             'success' => true,
@@ -60,17 +61,14 @@ class GroupController extends Controller
             'name' => $group->name
         ], 200);
     }
-    // public function importStudents(Request $request, $groupId)
-    // {
-    //     $group = StudentGroup::findOrFail($groupId);
-    //     $studentsData = $request->input('students'); // Ожидаем массив имен
 
-    //     foreach ($studentsData as $fullName) {
-    //         Student::updateOrCreate(
-    //             ['full_name' => $fullName, 'student_group_id' => $group->id]
-    //         );
-    //     }
-
-    //     return response()->json(['message' => 'Список успешно обновлен']);
-    // }
+    public function addSpecialty(Request $request)
+    {
+        $group = StudentGroup::findOrFail($request->group_id);
+        $group->specialty_id = $request->specialty_id;
+        $group->save();
+        return response()->json([
+            'success' => true
+        ]);
+    }
 }

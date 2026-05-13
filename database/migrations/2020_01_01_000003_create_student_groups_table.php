@@ -15,7 +15,8 @@ return new class extends Migration {
             $table->string('name');
             $table->string('academic_year');
             $table->string('teacher_name');
-            $table->string('specialty')->nullable();
+            $table->string('practise_type')->nullable();
+            $table->string('specialty_id')->nullable();
             $table->timestamps();
         });
     }
