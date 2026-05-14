@@ -18,7 +18,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'api/*',              // все маршруты, начинающиеся с api/
             'payment/callback',   // другой конкретный маршрут
         ]);
-        $middleware->add(\App\Http\Middleware\CspMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
