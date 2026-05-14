@@ -13,6 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->statefulApi();
+        $middleware->validateCsrfTokens(except: [
+            'webhook/mollie',     // конкретный маршрут
+            'api/*',              // все маршруты, начинающиеся с api/
+            'payment/callback',   // другой конкретный маршрут
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
