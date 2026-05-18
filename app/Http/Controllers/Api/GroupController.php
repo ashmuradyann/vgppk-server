@@ -30,6 +30,7 @@ class GroupController extends Controller
     {
         $group = StudentGroup::create([
             'name' => $request->name,
+            'course' => $request->course,
             'teacher_name' => $request->teacher_name,
             'academic_year' => $request->academic_year,
             // "specialty" => $request->specialty,

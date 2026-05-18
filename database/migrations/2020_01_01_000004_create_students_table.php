@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('full_name');
             $table->foreignId('student_group_id')->constrained()->onDelete('cascade');
+            $table->string('practise_company_id')->nullable();
             $table->timestamps();
         });
     }
