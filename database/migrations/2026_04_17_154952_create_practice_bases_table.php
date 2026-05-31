@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->id();
             $table->string('organisation');             // Полное наименование организации
             $table->string('supervisors');     // ФИО руководителя организации
-            $table->string('supervisors_positions'); // Должность руководителя
             $table->string('address')->nullable(); // Можно добавить адрес для документов
             $table->timestamps();
         });

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class StudentGroup extends Model
 {
     // Разрешаем массовое заполнение полей
-    protected $fillable = ['name', "course", 'academic_year', 'teacher_name', 'specialty_id', 'practise_type'];
+    protected $fillable = ["id", 'name', 'academic_year', 'teacher_name', 'specialty_id'];
 
     // СВЯЗЬ: Группа принадлежит специальности
     public function specialty(): BelongsTo
@@ -21,6 +21,11 @@ class StudentGroup extends Model
     public function students(): HasMany
     {
         return $this->hasMany(Student::class);
+    }
+
+    public function practices(): HasMany
+    {
+        return $this->hasMany(Practice::class);
     }
 }
 

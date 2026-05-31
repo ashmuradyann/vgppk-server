@@ -19,9 +19,9 @@ class GroupResource extends JsonResource
             'name' => $this->name,
             'academic_year' => $this->academic_year,
             'teacher_name' => $this->teacher_name,
-            'practise_type' => $this->practise_type,
             'specialty' => new SpecialtyResource($this->whenLoaded('specialty')),
             'students' => StudentResource::collection($this->whenLoaded('students')),
+            'practices' => PracticeResource::collection($this->whenLoaded('practices'))
         ];
     }
 }

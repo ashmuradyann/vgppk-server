@@ -11,9 +11,9 @@ class SpecialtyController extends Controller
     // Получить все специальности
     public function index()
     {
-        return response()->json([
-            'data' => Specialty::all()
-        ]);
+        $specialties = Specialty::select('id', 'code', 'specialty', "qualification")->get();
+
+        return $specialties;
     }
 
     // Создать новую специальность
@@ -31,6 +31,25 @@ class SpecialtyController extends Controller
             'message' => 'Специальность создана',
             'data' => $specialty
         ], 201);
+    }
+
+    public function update(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|integer|exists:specialties,id',
+            'code' => 'required|string|max:255',
+            'specialty' => 'nullable|string|max:500',
+            'qualification' => 'required|string|max:500',
+        ]);
+
+        $specialty = Specialty::findOrFail($validated['id']);
+
+        $specialty->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'data' => $specialty
+        ], 200);
     }
 
     public function destroy($id)

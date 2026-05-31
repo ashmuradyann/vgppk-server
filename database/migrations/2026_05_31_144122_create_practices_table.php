@@ -5,22 +5,21 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('groups', function (Blueprint $table) {
+        Schema::create('practices', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('start_date');
+            $table->string('end_date');
+            $table->string('type');
+            $table->integer('student_group_id');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('groups');
+        Schema::dropIfExists('practices');
     }
 };

@@ -24,7 +24,6 @@ class StudentController extends Controller
       "id" => $student->id,
       'group_id' => $student->student_group_id,
       'full_name' => $student->full_name,
-      'teacher_name' => StudentGroup::find($student->student_group_id)?->teacher_name
     ]);
   }
 
