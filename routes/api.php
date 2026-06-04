@@ -25,13 +25,15 @@ Route::post('/groups/addSpecialty', [GroupController::class, 'addSpecialty']);
 
 Route::post('/groups/{groupId}/practices', [GroupController::class, 'addPractice']);
 
-// Route::get('/groups/{groupId}/practices', [GroupController::class, 'getPractices']);
+Route::put('/groups/{groupId}', [GroupController::class, 'updateGroup']);
 
 Route::put('/groups/{groupId}/practices/{practiceId}', [GroupController::class, 'updatePractice']);
 
 Route::delete('/groups/{groupId}/practices/{practiceId}', [GroupController::class, 'deletePractice']);
 
 Route::post('/students/create', [StudentController::class, 'createStudent']);
+
+Route::put('/students/update/{id}', [StudentController::class, 'setStudentPracticeData']);
 
 Route::delete('/students/{id}', [StudentController::class, 'destroyStudent']);
 
@@ -51,4 +53,12 @@ Route::put('/practice_bases', [PracticeBaseController::class, 'update']);
 
 Route::delete('/practice_bases/{id}', [PracticeBaseController::class, 'destroy']);
 
-Route::post('/student_documents', [DocumentExportController::class, 'getCharacteristicOfStudent']);
+Route::post('/student_characteristic', [DocumentExportController::class, 'getCharacteristicOfStudent']);
+
+Route::post('/student_certificat_sheet', [DocumentExportController::class, 'getCertificatSheetDocument']);
+
+Route::post('/agreement_document', [DocumentExportController::class, 'getAgreementDocument']);
+
+Route::post('/review_document', [DocumentExportController::class, 'getReviewDocument']);
+
+Route::post('/direction_document', [DocumentExportController::class, 'getDirectionDocument']);

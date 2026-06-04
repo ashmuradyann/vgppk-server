@@ -16,7 +16,7 @@ class GroupController extends Controller
 {
     public function index()
     {
-        $groups = StudentGroup::select('id', 'name', 'teacher_name')->get();
+        $groups = StudentGroup::select('id', "course", 'name', 'teacher_name')->get();
 
         return $groups;
     }
@@ -31,22 +31,36 @@ class GroupController extends Controller
     {
         $group = StudentGroup::create([
             'name' => $request->name,
+            'course' => $request->course,
             'teacher_name' => $request->teacher_name,
-            'academic_year' => $request->academic_year,
         ]);
-
+        
         foreach ($request->students as $fullName) {
             Student::create([
                 'full_name' => $fullName,
                 'student_group_id' => $group->id
             ]);
         }
-
+        
         return response()->json([
             'group_id' => $group->id,
+            'course' => $group->course,
             'group_name' => $group->name,
             'teacher_name' => $group->teacher_name,
             "students" => $group->students
+        ]);
+    }
+
+    public function updateGroup(Request $request, $groupId)
+    {
+        $group = StudentGroup::findOrFail($groupId);
+ 
+        $group->update($request->only(['name', 'course', 'teacher_name']));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Group updated successfully',
+            'group' => $group
         ]);
     }
 

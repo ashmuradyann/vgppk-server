@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('full_name');
             $table->integer('student_group_id');
-            $table->string('practice_base_id')->nullable();
+            $table->integer('practice_base_id')->nullable();
             $table->string('practice_supervisor')->nullable();
             $table->timestamps();
         });

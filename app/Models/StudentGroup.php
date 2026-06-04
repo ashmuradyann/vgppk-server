@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class StudentGroup extends Model
 {
     // Разрешаем массовое заполнение полей
-    protected $fillable = ["id", 'name', 'academic_year', 'teacher_name', 'specialty_id'];
+    protected $fillable = ["id", 'name', "course", 'teacher_name', 'specialty_id'];
 
     // СВЯЗЬ: Группа принадлежит специальности
     public function specialty(): BelongsTo

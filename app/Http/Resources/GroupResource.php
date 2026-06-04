@@ -17,6 +17,7 @@ class GroupResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'course' => $this->course,
             'academic_year' => $this->academic_year,
             'teacher_name' => $this->teacher_name,
             'specialty' => new SpecialtyResource($this->whenLoaded('specialty')),

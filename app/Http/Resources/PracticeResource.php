@@ -16,8 +16,6 @@ class PracticeResource extends JsonResource
             'end_date' => $this->end_date,
             'type' => $this->type,
             'student_group_id' => $this->student_group_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ];
     }
 }
