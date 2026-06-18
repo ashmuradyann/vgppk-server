@@ -97,7 +97,7 @@ class DocumentExportController extends Controller
         $templateProcessor->setValue('supervisor', $supervisorShortName);
 
         $fileName = 'Kharakteristika_' . $student->full_name . '.docx';
-        $tempFile = storage_path('app/temp/' . $fileName);
+        $tempFile = storage_path('app/public/' . $fileName);
 
         $templateProcessor->saveAs($tempFile);
 
@@ -299,7 +299,7 @@ class DocumentExportController extends Controller
         $templateProcessor->setValue('supervisor', $supervisorShortName);
 
         $fileName = 'Attestatsionny_list_' . $student->full_name . '.docx';
-        $tempFile = storage_path('app/temp/' . $fileName);
+        $tempFile = storage_path('app/public/' . $fileName);
 
         $templateProcessor->saveAs($tempFile);
 
@@ -405,7 +405,7 @@ class DocumentExportController extends Controller
         // $templateProcessor->setValue('course', json_encode($result));
 
         $fileName = 'Napravlenie_' . $group->name . '.docx';
-        $tempFile = storage_path('app/temp/' . $fileName);
+        $tempFile = storage_path('app/public/' . $fileName);
 
         $templateProcessor->saveAs($tempFile);
 
