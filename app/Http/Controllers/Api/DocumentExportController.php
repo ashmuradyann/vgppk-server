@@ -345,7 +345,7 @@ class DocumentExportController extends Controller
         $templateProcessor->setValue('supervisor', $supervisorShortName);
 
         $fileName = 'Otziv_' . $group->name . "_" . $organisation->organisation . '.docx';
-        $tempFile = storage_path('app/temp/' . $fileName);
+        $tempFile = storage_path('app/public/' . $fileName);
 
         $templateProcessor->saveAs($tempFile);
 
