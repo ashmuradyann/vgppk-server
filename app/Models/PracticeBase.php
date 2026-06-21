@@ -7,5 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PracticeBase extends Model
 {
-    protected $fillable = ['organisation', "supervisors",  "address"];
+    protected $fillable = ['organisation', "supervisors"];
+
+    public function students()
+    {
+        return $this->hasMany(Student::class);
+    }
 }

@@ -55,10 +55,18 @@ Route::delete('/practice_bases/{id}', [PracticeBaseController::class, 'destroy']
 
 Route::post('/student_characteristic', [DocumentExportController::class, 'getCharacteristicOfStudent']);
 
+Route::post('/characteristic_group', [DocumentExportController::class, 'getCharacteristicOfGroupDocument']);
+
 Route::post('/student_certificat_sheet', [DocumentExportController::class, 'getCertificatSheetDocument']);
+
+Route::post('/certificat_sheet_group', [DocumentExportController::class, 'getCertificatSheetGroupDocument']);
 
 Route::post('/agreement_document', [DocumentExportController::class, 'getAgreementDocument']);
 
 Route::post('/review_document', [DocumentExportController::class, 'getReviewDocument']);
 
 Route::post('/direction_document', [DocumentExportController::class, 'getDirectionDocument']);
+
+Route::post('/direction_group_document', [DocumentExportController::class, 'getDirectionGroupDocument']);
+
+Route::post('/ordering_document', [DocumentExportController::class, 'getOrderingDocument']);

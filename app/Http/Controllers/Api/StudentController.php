@@ -17,12 +17,14 @@ class StudentController extends Controller
   {
     $student = Student::create([
       'full_name' => $request->name,
+      'inner_supervisor' => "",
       'student_group_id' => $request->group_id
     ]);
 
     return response()->json([
       "id" => $student->id,
       'group_id' => $student->student_group_id,
+      'inner_supervisor' => $student->inner_supervisor,
       'full_name' => $student->full_name,
     ]);
   }
@@ -31,11 +33,12 @@ class StudentController extends Controller
   {
     $student = Student::findOrFail($id); // Fixed: changed findOrFile to findOrFail
 
-    $student->update($request->only('full_name', 'practice_base_id', 'practice_supervisor'));
+    $student->update($request->only('full_name', "inner_supervisor", 'practice_base_id', 'practice_supervisor'));
 
     return response()->json([
       "id" => $student->id,
       'full_name' => $student->full_name,
+      'inner_supervisor' => $student->inner_supervisor,
       'practice_base_id' => $student->practice_base_id,
       'practice_supervisor' => $student->practice_supervisor,
     ]);

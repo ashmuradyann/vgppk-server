@@ -13,7 +13,7 @@ class PracticeBaseController extends Controller
     public function index()
     {
 
-        $practiceBases = PracticeBase::select('id', 'organisation', 'supervisors', "address")->get();
+        $practiceBases = PracticeBase::select('id', 'organisation', 'supervisors')->get();
 
         return $practiceBases;
     }
@@ -24,7 +24,6 @@ class PracticeBaseController extends Controller
         $validated = $request->validate([
             'organisation' => 'required|string',
             "supervisors" => "required|string",
-            "address" => "required|string"
         ]);
 
         $practice_base = PracticeBase::create($validated);
@@ -41,7 +40,6 @@ class PracticeBaseController extends Controller
             'id' => 'required|integer|exists:practice_bases,id',
             'organisation' => 'required|string|max:255',
             'supervisors' => 'nullable|string|max:500',
-            'address' => 'required|string|max:500',
         ]);
 
         $practiseBase = PracticeBase::findOrFail($validated['id']);

@@ -38,7 +38,8 @@ class GroupController extends Controller
         foreach ($request->students as $fullName) {
             Student::create([
                 'full_name' => $fullName,
-                'student_group_id' => $group->id
+                'student_group_id' => $group->id,
+                'inner_supervisor' => ""
             ]);
         }
         
