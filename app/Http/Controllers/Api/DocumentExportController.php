@@ -298,148 +298,146 @@ class DocumentExportController extends Controller
 
     public function getAgreementDocument(Request $request)
     {
-        $templatePath = storage_path('app/templates/Dogovor_o_prakticheskoy_podgotovke_s_prilozheniem.docx');
-        $templateProcessor = new TemplateProcessor($templatePath);
-
         $group = StudentGroup::findOrFail($request->group_id);
         $students = $group->students;
         $practice = Practice::findOrFail($request->selectedPracticeId);
-
+        $specialty = Specialty::findOrFail($group->specialty_id);
         $bases = PracticeBase::findOrFail(json_decode($request->basesIds, true));
 
-        $name = $practice->name;
-        $start_date = $practice->start_date;
-        $end_date = $practice->end_date;
-        $course = $group->course;
-        $group_name = $group->name;
+        $practicePeriod = date('d.m.Y', strtotime($practice->start_date))
+            . ' - ' .
+            date('d.m.Y', strtotime($practice->end_date));
 
-        $practicePeriod = date('d.m.Y', strtotime($start_date)) . ' - ' . date('d.m.Y', strtotime($end_date));
+        $studentsByBase = $students->groupBy('practice_base_id');
 
-        $tableStyle = ['borderSize' => 6, 'borderColor' => '000000'];
-        $table1 = new Table($tableStyle);
-        $table2 = new Table($tableStyle);
-
-        $fontStyle = ['name' => 'Times New Roman', 'size' => 9, 'color' => '000000', 'bold' => false];
-        $paragraphStyle = ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER];
-
-        $data1 = [
-            ['№ п/п', 'Учебная группа, курс', 'Фамилия, Имя, Отчество студента', "Наименование образовательной программы", "Сроки практической подготовки", "Компоненты образовательной программы"],
-        ];
-        $data2 = [
-            ['№ п/п', 'Адрес помещения', 'Наименование помещения'],
-        ];
-
-        $rowNumber1 = 1;
-        $rowNumber2 = 1;
-        foreach ($students as $index => $student) {
-            if ($index === 0) {
-                $data1[] = [
-                    $rowNumber1,
-                    "{$group_name}, {$course} курс",
-                    $student->full_name,
-                    $name,
-                    $practicePeriod,
-                    "",
-                ];
-            } else {
-                $data1[] = [
-                    $rowNumber1,
-                    "",
-                    $student->full_name,
-                    "",
-                    "",
-                    "",
-                ];
-            }
-            $rowNumber1++;
-        }
+        $tables = [];
         foreach ($bases as $base) {
-            $data2[] = [
-                $rowNumber2,
-                "",
-                $base->organisation,
-            ];
-            $rowNumber2++;
+            $baseStudents = $studentsByBase->get($base->id, collect());
+            $tables[] = $this->buildAgreementTable(
+                $baseStudents,
+                $group,
+                $specialty,
+                $practice,
+                $practicePeriod
+            );
         }
 
-        foreach ($data1 as $rowIndex => $rowData) {
-            $table1->addRow();
+        $templatePath = storage_path('app/templates/Dogovor_o_prakticheskoy_podgotovke_s_prilozheniem.docx');
+        ini_set('pcre.backtrack_limit', '10000000');
+        ini_set('pcre.jit', '1');
 
-            foreach ($rowData as $cellIndex => $cellText) {
-                $cellStyle = [
-                    'cellMarginTop' => 100,
-                    'cellMarginBottom' => 100,
-                    'cellMarginLeft' => 100,
-                    'cellMarginRight' => 100,
-                ];
+        $templateProcessor = new TemplateProcessor($templatePath);
 
-                $cellWidth = 2500;
+        // Клонируем блок (суффиксы не добавляются — добавим вручную ниже)
+        $templateProcessor->cloneBlock('agreement_block', count($tables), true, false);
 
-                switch ($cellIndex) {
-                    case 0:
-                        $cellWidth = 500;
-                        $cellStyle['cellMarginLeft'] = 30;
-                        $cellStyle['cellMarginRight'] = 30;
-                        break;
-                    case 1:
-                        $cellWidth = 1200;
-                        break;
-                    case 2:
-                        $cellWidth = 3500;
-                        $cellStyle['cellMarginLeft'] = 120;
-                        break;
-                    case 3:
-                        $cellWidth = 3000;
-                        break;
-                    case 4:
-                        $cellWidth = 1800;
-                        break;
-                    case 5:
-                        $cellWidth = 2000;
-                        break;
-                }
+        // Вручную нумеруем каждое вхождение ${practice_table} в XML
+        $reflection = new \ReflectionClass($templateProcessor);
+        $prop = $reflection->getProperty('tempDocumentMainPart');
+        $prop->setAccessible(true);
+        $xml = $prop->getValue($templateProcessor);
 
-                $table1->addCell($cellWidth, $cellStyle)->addText($cellText, $fontStyle, $paragraphStyle);
-            }
+        $counter = 1;
+        $xml = preg_replace_callback(
+            '/\$\{practice_table\}/',
+            function () use (&$counter) {
+                return '${practice_table_' . $counter++ . '}';
+            },
+            $xml
+        );
+
+        $prop->setValue($templateProcessor, $xml);
+
+        \Log::info('Variables after numbering:', $templateProcessor->getVariables());
+
+        // Теперь вставляем таблицы по пронумерованным переменным
+        foreach ($tables as $index => $table) {
+            $templateProcessor->setComplexBlock('practice_table_' . ($index + 1), $table);
         }
-        foreach ($data2 as $rowIndex => $rowData) {
-            $table2->addRow();
-
-            foreach ($rowData as $cellIndex => $cellText) {
-                $cellStyle = [
-                    'cellMarginTop' => 100,
-                    'cellMarginBottom' => 100,
-                    'cellMarginLeft' => 100,
-                    'cellMarginRight' => 100,
-                ];
-
-                $cellWidth = 2500;
-
-                switch ($cellIndex) {
-                    case 0:
-                        $cellWidth = 500;
-                        $cellStyle['cellMarginLeft'] = 30;
-                        $cellStyle['cellMarginRight'] = 30;
-                        break;
-                    case 1:
-                        $cellWidth = 5700;
-                        break;
-                    case 2:
-                        $cellWidth = 5700;
-                        break;
-                }
-
-                $table2->addCell($cellWidth, $cellStyle)->addText($cellText, $fontStyle, $paragraphStyle);
-            }
-        }
-
-        $templateProcessor->setComplexBlock('practice_table', $table1);
-        $templateProcessor->setComplexBlock('bases_table', $table2);
 
         $savePath = storage_path('app/public/generated_document.docx');
         $templateProcessor->saveAs($savePath);
 
         return response()->download($savePath)->deleteFileAfterSend(true);
+    }
+
+    private function buildAgreementTable(
+        $students,
+        StudentGroup $group,
+        Specialty $specialty,
+        Practice $practice,
+        string $practicePeriod
+    ): Table {
+        $tableStyle = ['borderSize' => 6, 'borderColor' => '000000'];
+        $fontStyle = ['name' => 'Times New Roman', 'size' => 9, 'color' => '000000', 'bold' => false];
+        $paragraphStyle = ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER];
+
+        $table = new Table($tableStyle);
+
+        // Шапка таблицы
+        $headers = [
+            '№ п/п',
+            'Учебная группа, курс',
+            'Фамилия, Имя, Отчество студента',
+            'Наименование образовательной программы',
+            'Сроки практической подготовки',
+            'Компоненты образовательной программы',
+        ];
+
+        $table->addRow();
+        foreach ($headers as $cellIndex => $text) {
+            [$width, $style] = $this->getAgreementCellParams($cellIndex);
+            $table->addCell($width, $style)->addText($text, $fontStyle, $paragraphStyle);
+        }
+
+        // Строки студентов
+        $rowNumber = 1;
+        foreach ($students as $index => $student) {
+            $isFirst = ($index === 0);
+
+            $rowData = [
+                $rowNumber,
+                $isFirst ? "{$group->name}, {$group->course} курс" : '',
+                $student->full_name,
+                $isFirst ? $specialty->code . ' ' . $specialty->specialty : '',
+                $isFirst ? $practicePeriod : '',
+                $isFirst ? $practice->name : '',
+            ];
+
+            $table->addRow();
+            foreach ($rowData as $cellIndex => $cellText) {
+                [$width, $style] = $this->getAgreementCellParams($cellIndex);
+                $table->addCell($width, $style)->addText($cellText, $fontStyle, $paragraphStyle);
+            }
+
+            $rowNumber++;
+        }
+
+        return $table;
+    }
+
+    private function getAgreementCellParams(int $cellIndex): array
+    {
+        $style = [
+            'cellMarginTop' => 100,
+            'cellMarginBottom' => 100,
+            'cellMarginLeft' => 100,
+            'cellMarginRight' => 100,
+        ];
+
+        $widths = [500, 1200, 3500, 3000, 1800, 2000];
+        $width = $widths[$cellIndex] ?? 2500;
+
+        if ($cellIndex === 0) {
+            $style['cellMarginLeft'] = 30;
+            $style['cellMarginRight'] = 30;
+        }
+
+        if ($cellIndex === 2) {
+            $style['cellMarginLeft'] = 120;
+        }
+
+        return [$width, $style];
     }
 
     private function generateAttestationSheetFile(
